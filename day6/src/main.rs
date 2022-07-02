@@ -39,7 +39,7 @@ fn evolve_fish(start: SMatrix<u64, 1, DIM>, days: u64) -> SMatrix<u64, 1, DIM> {
 fn main() {
     let mut fishies: [u64; DIM] = [0; DIM];
     let tmp = read_to_string("day6/day6.txt").unwrap();
-    let input = tmp.split(",").map(|val| val.parse::<usize>().unwrap());
+    let input = tmp.split(',').map(|val| val.parse::<usize>().unwrap());
 
     for fish in input {
         fishies[fish] += 1;

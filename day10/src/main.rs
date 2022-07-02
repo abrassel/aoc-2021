@@ -11,10 +11,7 @@ fn close(c: char) -> char {
 }
 
 fn is_open(c: char) -> bool {
-    match c {
-        '{' | '(' | '[' | '<' => true,
-        _ => false,
-    }
+    matches!(c, '{' | '(' | '[' | '<')
 }
 
 fn score(line: &str) -> Option<usize> {
@@ -23,11 +20,9 @@ fn score(line: &str) -> Option<usize> {
     for c in line.chars() {
         if is_open(c) {
             stack.push(close(c));
-        } else {
-            if let Some(val) = stack.pop() {
-                if val != c {
-                    return None;
-                }
+        } else if let Some(val) = stack.pop() {
+            if val != c {
+                return None;
             }
         }
     }
@@ -51,7 +46,7 @@ fn score_char(c: char) -> usize {
         ']' => 2,
         '}' => 3,
         '>' => 4,
-        _ => unreachable!(format!("Found {}", c)),
+        _ => unreachable!("{}", c),
     }
 }
 

@@ -22,7 +22,7 @@ impl FromStr for Input {
             type Err = Infallible;
 
             fn from_str(s: &str) -> Result<Self, Self::Err> {
-                Ok(Self(s.split(",").map(|num| num.parse().unwrap()).collect()))
+                Ok(Self(s.split(',').map(|num| num.parse().unwrap()).collect()))
             }
         }
 
@@ -31,20 +31,16 @@ impl FromStr for Input {
 
             fn from_str(s: &str) -> Result<Self, Self::Err> {
                 let mut mapping = HashMap::with_capacity(5 * 5);
-                let raw = s
-                    .lines()
-                    .enumerate()
-                    .map(|(row, line)| {
-                        line.split_whitespace()
-                            .enumerate()
-                            .map(|(col, num)| {
-                                let num = usize::from_str(num).unwrap();
-                                mapping.insert(num, (col, row));
-                                false
-                            })
-                            .collect::<Vec<_>>()
-                    })
-                    .flatten();
+                let raw = s.lines().enumerate().flat_map(|(row, line)| {
+                    line.split_whitespace()
+                        .enumerate()
+                        .map(|(col, num)| {
+                            let num = usize::from_str(num).unwrap();
+                            mapping.insert(num, (col, row));
+                            false
+                        })
+                        .collect::<Vec<_>>()
+                });
 
                 let board = Matrix5::from_iterator(raw);
 

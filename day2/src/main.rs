@@ -30,7 +30,7 @@ impl FromStr for Movement {
     type Err = Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.split_once(" ") {
+        match s.split_once(' ') {
             Some((dir, dist)) => Ok(Self {
                 direction: dir.parse().unwrap(),
                 distance: dist.parse().unwrap(),

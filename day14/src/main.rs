@@ -26,6 +26,7 @@ fn mutate_polymer(
     new
 }
 
+#[allow(clippy::type_complexity)]
 fn get_input(input: &str) -> (HashMap<(char, char), usize>, HashMap<(char, char), char>) {
     let (start, input) = input.split_once("\n\n").unwrap();
     let transforms = input

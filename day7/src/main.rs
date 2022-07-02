@@ -3,7 +3,7 @@ use std::fs::read_to_string;
 fn main() {
     let input = read_to_string("day7/day7.txt").unwrap();
     let input = input
-        .split(",")
+        .split(',')
         .map(|elm| elm.parse().unwrap())
         .collect::<Vec<i32>>();
     // input.sort_unstable();
