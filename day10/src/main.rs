@@ -46,7 +46,7 @@ fn score_char(c: char) -> usize {
         ']' => 2,
         '}' => 3,
         '>' => 4,
-        _ => unreachable!("{}", c),
+        _ => unreachable!("Found {}", c),
     }
 }
 
