@@ -4,10 +4,10 @@ use std::{cmp::Reverse, collections::HashSet, fs};
 
 const DIRECTIONS: [(isize, isize); 4] = [(-1, 0), (1, 0), (0, -1), (0, 1)];
 
-fn neighbors<'a>(
-    input: &'a [Vec<u8>],
+fn neighbors(
+    input: &'_ [Vec<u8>],
     (x, y): (usize, usize),
-) -> impl Iterator<Item = ((usize, usize), u8)> + 'a {
+) -> impl Iterator<Item = ((usize, usize), u8)> + '_ {
     DIRECTIONS.iter().filter_map(move |(y_dir, x_dir)| {
         let y = y.checked_add_signed(*y_dir)?;
         let x = x.checked_add_signed(*x_dir)?;

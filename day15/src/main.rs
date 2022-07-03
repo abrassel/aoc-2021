@@ -1,69 +1,86 @@
+#![feature(try_blocks)]
 #![feature(mixed_integer_ops)]
-#![feature(bool_to_option)]
+
+use std::{
+    cmp::Reverse,
+    collections::{HashMap, HashSet},
+    fs,
+};
 
 use keyed_priority_queue::KeyedPriorityQueue;
-use std::{cmp::Reverse, collections::HashSet, fs};
-use twox_hash::XxHash;
 
-type Point = (usize, usize);
+fn dijsktra(
+    grid: &[Vec<u32>],
+    start: (usize, usize),
+    end: (usize, usize),
+) -> HashMap<(usize, usize), ((usize, usize), u32)> {
+    let n_size = grid.len() * grid[0].len();
+    let mut visited = HashSet::with_capacity(n_size);
+    let mut to_visit = KeyedPriorityQueue::with_capacity(n_size);
+    let mut paths = HashMap::with_capacity(n_size);
 
-fn neighbors<'a>(maze: &'a [Vec<u32>], (x, y): &'a Point) -> impl Iterator<Item = Point> + 'a {
-    [(-1, 0), (1, 0), (0, -1), (0, 1)]
-        .into_iter()
-        .filter_map(|(xdir, ydir)| {
-            let x = x.checked_add_signed(xdir)?;
-            let y = y.checked_add_signed(ydir)?;
-            ((..maze.len() * 5).contains(&y) && (..maze[0].len() * 5).contains(&x))
-                .then_some((x, y))
-        })
-}
+    to_visit.push(start, Reverse(0));
 
-fn cost(maze: &[Vec<u32>], &(x, y): &Point) -> u32 {
-    let y_len = maze.len();
-    let x_len = maze[0].len();
-    let base_value = maze[y % y_len][x % x_len];
-    let x_tile = u32::try_from(x / x_len).unwrap();
-    let y_tile = u32::try_from(y / y_len).unwrap();
-    (base_value + x_tile + y_tile - 1) % 9 + 1
-}
-
-fn djisktras(maze: &[Vec<u32>], start: Point, stop: Point) -> u32 {
-    let mut visited: HashSet<_, std::hash::BuildHasherDefault<XxHash>> = Default::default();
-    let mut to_visit = KeyedPriorityQueue::new();
-
-    to_visit.push((start, vec![]), Reverse(0));
-
-    while let Some(((cur, chain), Reverse(total_cost))) = to_visit.pop() {
-        if !visited.insert(cur) {
-            continue;
+    while let Some((cur, Reverse(cost))) = to_visit.pop() {
+        println!("Visiting: {:?} at a cost of {}", cur, cost);
+        if cur == end {
+            break;
         }
-        if cur == stop {
-            return total_cost;
-        }
-        let mut new_chain = chain.clone();
-        new_chain.push(cur.clone());
-        for neighbor in neighbors(maze, &cur) {
-            to_visit.push(
-                (neighbor, new_chain.clone()),
-                Reverse(total_cost + cost(maze, &neighbor)),
-            );
+        visited.insert(cur);
+
+        for dir in [(-1, 0), (1, 0), (0, 1), (0, -1)] {
+            let neighbor: Option<_> = try {
+                let x = cur.0.checked_add_signed(dir.0)?;
+                let y = cur.1.checked_add_signed(dir.1)?;
+                let cost = *grid.get(y)?.get(x)?;
+
+                Some(((x, y), cost))
+            };
+            if let Some(Some((neighbor, edge))) = neighbor {
+                if !visited.contains(&neighbor) {
+                    let visit_cost = cost + edge;
+                    paths
+                        .entry(neighbor)
+                        .and_modify(|orig: &mut ((usize, usize), u32)| {
+                            if orig.1 > visit_cost {
+                                *orig = (cur, visit_cost);
+                            }
+                        })
+                        .or_insert((cur, visit_cost));
+
+                    to_visit.push(neighbor, Reverse(visit_cost));
+                }
+            }
         }
     }
 
-    unreachable!()
-}
-
-fn end(maze: &[Vec<u32>]) -> Point {
-    (maze[0].len() * 5 - 1, maze.len() * 5 - 1)
+    paths
 }
 
 fn main() {
     let input = fs::read_to_string("day15/day15.txt").unwrap();
-    let maze: Vec<_> = input
+    let grid: Vec<Vec<_>> = input
         .lines()
-        .map(|line| line.chars().map(|c| c.to_digit(10).unwrap()).collect())
+        .map(|line| {
+            line.chars()
+                .map(|char| char.to_digit(10).unwrap())
+                .collect()
+        })
         .collect();
 
-    let shortest_cost = djisktras(&maze, (0, 0), end(&maze));
-    println!("Shortest: {}", shortest_cost);
+    let end = (grid[0].len() - 1, grid.len() - 1);
+    let paths = dijsktra(&grid, (0, 0), end);
+    let mut cur = &end;
+    let mut sum = grid[end.1][end.0];
+    while let Some((prev, cost)) = paths.get(cur) {
+        println!(
+            "Prev: {:?}, cost: {}, grid: {}",
+            prev, cost, grid[prev.1][prev.0]
+        );
+        sum += grid[prev.1][prev.0];
+        cur = prev;
+    }
+    println!("Paths: {:?}", paths);
+    println!("{}", sum - 1);
+    println!("The answer is: {}", paths.get(&end).unwrap().1)
 }

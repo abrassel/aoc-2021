@@ -62,7 +62,7 @@ fn get_input() -> (Points, Vec<Move>) {
     let coords = coords
         .lines()
         .map(|line| {
-            let (l, r) = line.split_once(",").unwrap();
+            let (l, r) = line.split_once(',').unwrap();
             (l.parse().unwrap(), r.parse().unwrap())
         })
         .collect();

@@ -5,7 +5,7 @@ type Graph<'a> = HashMap<&'a str, Vec<&'a str>>;
 fn make_graph(data: &str) -> Graph {
     let mut map: HashMap<&str, Vec<&str>> = HashMap::new();
     for line in data.lines() {
-        let (from, to) = line.split_once("-").unwrap();
+        let (from, to) = line.split_once('-').unwrap();
         map.entry(from).or_default().push(to);
         map.entry(to).or_default().push(from);
     }
@@ -46,24 +46,22 @@ fn dfs<'a>(graph: &'a Graph) -> usize {
 
         if state.cur == "end" {
             paths.insert(state.path.clone());
-        } else {
-            if state.cur.chars().all(char::is_lowercase) {
-                if !state.second_visit_used && state.cur != "start" {
-                    // once with the second state being used
-                    let used_second_state = State {
-                        second_visit_used: true,
-                        ..state.clone()
-                    };
-                    explore_neighbors(used_second_state);
-                }
-
-                // once with a standard visit
-                let visited = state.visited.update(state.cur);
-                let new_state = State { visited, ..state };
-                explore_neighbors(new_state);
-            } else {
-                explore_neighbors(state);
+        } else if state.cur.chars().all(char::is_lowercase) {
+            if !state.second_visit_used && state.cur != "start" {
+                // once with the second state being used
+                let used_second_state = State {
+                    second_visit_used: true,
+                    ..state.clone()
+                };
+                explore_neighbors(used_second_state);
             }
+
+            // once with a standard visit
+            let visited = state.visited.update(state.cur);
+            let new_state = State { visited, ..state };
+            explore_neighbors(new_state);
+        } else {
+            explore_neighbors(state);
         }
     }
 

@@ -75,7 +75,7 @@ impl Display for Ocean {
         for x in 0..=*max_x {
             for y in 0..*max_y {
                 match self.0.get(&(x, y)) {
-                    Some(value) => write!(f, "{}", value.to_string())?,
+                    Some(value) => write!(f, "{}", value)?,
                     None => write!(f, ".")?,
                 }
             }

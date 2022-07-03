@@ -7,7 +7,7 @@ const NUMBERS: [&str; 10] = [
 ];
 
 fn frequencies(numbers: &[&str]) -> HashMap<char, usize> {
-    numbers.into_iter().map(|c| c.chars()).flatten().counts()
+    numbers.iter().flat_map(|c| c.chars()).counts()
 }
 
 fn score(reference: &HashMap<usize, usize>, (input, output): (Vec<&str>, Vec<&str>)) -> usize {
@@ -25,16 +25,13 @@ fn count_num(num: &str, freqs: &HashMap<char, usize>) -> usize {
 
 fn main() {
     let input = fs::read_to_string("day8/day8.txt").unwrap();
-    let input: Vec<(Vec<&str>, Vec<&str>)> = input
-        .lines()
-        .map(|line| {
-            let (input, output) = line.split_once(" | ").unwrap();
-            let input = input.split_whitespace().collect();
-            let output = output.split_whitespace().collect();
+    let input = input.lines().map(|line| {
+        let (input, output) = line.split_once(" | ").unwrap();
+        let input = input.split_whitespace().collect();
+        let output = output.split_whitespace().collect();
 
-            (input, output)
-        })
-        .collect();
+        (input, output)
+    });
     let reference = {
         let freqs = frequencies(&NUMBERS);
         NUMBERS
