@@ -78,7 +78,8 @@ impl<S: Iterator<Item = bool>> PacketParser for BitStream<S> {
 
     fn parse_operator(&mut self) -> Vec<u64> {
         let length_type_id = self.read_number::<1>();
-        let packets = if length_type_id == 0 {
+        
+        if length_type_id == 0 {
             let read_limit = self.read_number::<15>() + self.read(); //important that the read comes after `read_number`
             let mut packets = vec![];
             while self.read() < read_limit {
@@ -91,8 +92,7 @@ impl<S: Iterator<Item = bool>> PacketParser for BitStream<S> {
             iter::repeat_with(|| self.parse_packet())
                 .take(packet_count)
                 .collect()
-        };
-        packets
+        }
     }
 
     fn parse_packet(&mut self) -> u64 {
