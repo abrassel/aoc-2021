@@ -108,6 +108,9 @@ dependencies = [
 [[package]]
 name = "day19"
 version = "0.1.0"
+dependencies = [
+ "nalgebra 0.31.0",
+]
 
 [[package]]
 name = "day2"
@@ -127,7 +130,7 @@ dependencies = [
 name = "day4"
 version = "0.1.0"
 dependencies = [
- "nalgebra",
+ "nalgebra 0.29.0",
 ]
 
 [[package]]
@@ -144,7 +147,7 @@ dependencies = [
 name = "day6"
 version = "0.1.0"
 dependencies = [
- "nalgebra",
+ "nalgebra 0.29.0",
 ]
 
 [[package]]
@@ -266,7 +269,23 @@ dependencies = [
  "num-complex",
  "num-rational",
  "num-traits",
- "simba",
+ "simba 0.6.0",
+ "typenum",
+]
+
+[[package]]
+name = "nalgebra"
+version = "0.31.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "18a89248335f688e4bd994e6d030fd7e185eb41769b8c435395075425e100ac6"
+dependencies = [
+ "approx",
+ "matrixmultiply",
+ "nalgebra-macros",
+ "num-complex",
+ "num-rational",
+ "num-traits",
+ "simba 0.7.1",
  "typenum",
 ]
 
@@ -475,6 +494,19 @@ name = "simba"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f0b7840f121a46d63066ee7a99fc81dcabbc6105e437cae43528cea199b5a05f"
+dependencies = [
+ "approx",
+ "num-complex",
+ "num-traits",
+ "paste",
+ "wide",
+]
+
+[[package]]
+name = "simba"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "13a2609e876d4f77f6ab7ff5254fc39b4f1927ba8e6db3d18be7c32534d3725e"
 dependencies = [
  "approx",
  "num-complex",
